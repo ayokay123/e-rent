@@ -23,6 +23,8 @@ function LoginForm() {
   const { trigger } = useAuthentication();
 
   const onSubmit = async ({ email, password }) => {
+    console.log('im here')
+    console.log(email)
     try {
       await trigger({
         email,
@@ -35,6 +37,7 @@ function LoginForm() {
 
       navigate('/profile');
     } catch (error) {
+      console.log(error)
       toast.error('Invalid email or password');
     }
   };
