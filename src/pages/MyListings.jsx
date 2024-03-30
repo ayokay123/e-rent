@@ -68,11 +68,14 @@ function MyListings() {
               return formattedObject;
             });
 
-            console.log(arrayOfValues);
-            console.log(data);
-            setListings(arrayOfValues.filter((item) => item.user_fk === user.id));
-            setFilteredListings(arrayOfValues.filter((item) => item.user_fk === user.id))
-          })
+            console.log(user.id);
+            
+            setListings(arrayOfValues.filter((item) => item.user_fk == user.id));
+            setFilteredListings(arrayOfValues.filter((item) => item.user_fk == user.id))
+            console.log(arrayOfValues.filter((item) => {
+              console.log(item,user,item.user_fk == user )
+              return item.user_fk === user.id}));
+                      })
           .catch((err) => {
             console.log(err);
           });

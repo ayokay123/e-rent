@@ -27,7 +27,7 @@ export function AuthProvider({
   // but feel free to omit this or use the
   // router of your choice.
   useEffect(() => {
-    setUser(getItem("user"));
+    setUser(JSON.parse(getItem("user")));
   }, [])
 
   // Reset the error state if we change page

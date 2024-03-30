@@ -12,6 +12,7 @@ import convert from 'xml-js';
 
 import IMG1 from './../../assets/images/for-rent-category-bg.jpg';
 import IMG2 from './../../assets/images/for-sale-category-bg.jpg';
+import useAuth from './../../hooks/useAuth';
 
 import { ReactComponent as MailIcon } from '../../assets/svg/mail.svg';
 
@@ -22,6 +23,7 @@ function ListingDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const { user, login, signUp, logout } = useAuth();
 
   console.log(format(new Date(), 'd LLLL, y'));
 

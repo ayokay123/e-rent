@@ -37,12 +37,11 @@ function CreateListing() {
       <soapenv:Body>\
       <gen:addPropertyRequest>\
       <gen:property>\
-      <gen:id>2</gen:id>\
       <gen:location>${values.address}</gen:location>\
       <gen:price>${values.regularPrice}</gen:price>\
       <gen:title>${values.title}</gen:title>\
       <gen:description>${values.description}</gen:description>\
-      <gen:user_fk>5</gen:user_fk>\
+      <gen:user_fk>${user.id}</gen:user_fk>\
       <gen:status>${values.type}</gen:status>\
       </gen:property>\
       </gen:addPropertyRequest>\

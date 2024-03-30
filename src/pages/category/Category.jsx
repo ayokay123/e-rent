@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import convert from 'xml-js';
 
 import ListingItem from '../../components/ListingItem';
 import ListingItemSkeleton from '../../skeletons/ListingItemSkeleton';
 
 import useAbortableEffect from '../../hooks/useAbortableEffect';
+import useAuth from './../../hooks/useAuth';
 
 import { getListingsByCategory, getFilteredListings } from './filterFunctions';
 
@@ -13,23 +16,11 @@ function Category() {
   const initalRender = useRef(true);
   const [sortBy, setSortBy] = useState('');
   const [listings, setListings] = useState([]);
+  const { user, login, signUp, logout } = useAuth();
 
   const { categoryName } = useParams();
 
-  useAbortableEffect(
-    (status) => {
-      document.title =
-        categoryName === 'sale' ? 'For Sale | Rent or Sell' : 'For Rent | Rent or Sell';
-      // const getListingsData = async () => {
-      //   const [data, error] = await getListingsByCategory(categoryName);
-      //   if (!status.aborted) {
-      //     setData({ listings: data, error, loading: false });
-      //   }
-      // };
-      // getListingsData();
-    },
-    [categoryName]
-  );
+
 
   useEffect(() => {
     const getAllListings = async () => {
@@ -66,7 +57,7 @@ function Category() {
 
             console.log(arrayOfValues);
             console.log(data);
-            setListings(arrayOfValues.filter((item) => item.user_fk !== user.id && item.status === categoryName.toUpperCase()));
+            setListings(arrayOfValues.filter((item) => item.user_fk !== user?.id));
           })
           .catch((err) => {
             console.log(err);
@@ -92,13 +83,12 @@ function Category() {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {listings.length > 0 &&
-            listings.map(({ docID, data }) => {
+            listings.map((item) => {
               return (
                 <ListingItem
-                  key={docID}
-                  docID={docID}
-                  isFavorite={false}
-                  {...data}
+                  key={item.id }
+                  docID={item.id}
+                  item = {item}
                 />
               );
             })}

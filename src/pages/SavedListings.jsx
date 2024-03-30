@@ -43,8 +43,8 @@ function SavedListings() {
         }
     `
       });
-      console.log(data)
-      setListings(data.data.findAllAppointments?.filter((item) => item.agentId === user.id));
+      console.log(data.data.findAllAppointments)
+      setListings(data.data.findAllAppointments);
       return data;
     };
     fetchData();
@@ -62,29 +62,26 @@ function SavedListings() {
           <h1 className="text-3xl md:text-4xl font-extrabold text-center mb-8">Appointments</h1>
         </div>
         <div className="grid grid-cols-1 gap-4 xl:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {loading &&
-            Array(9)
-              .fill()
-              .map((item) => <ListingItemSkeleton key={uuidv4()} />)}
-          {error && <p className="xl:col-span-3 md:col-span-2">{error}</p>}
-          {listings.length === 0 && !error ? (
-            <p className="xl:col-span-3 md:col-span-2">No Appointments to show.</p>
-          ) : null}
-          {listings.length > 0 &&
-            listings.map((item) => (
-              <table>
-                <th>
-                  <td>Date</td>
-                  <td>Description</td>
-                  <td>Status</td>
-                </th>
-                <tr>
-                  <td>{item.dateTime}</td>
-                  <td>{item.description}</td>
-                  <td>{item.status}</td>
-                </tr>
-              </table>
-            ))}
+     
+  {listings.length > 0 && (
+  <table>
+    <tbody>
+      <tr>
+        <td>Date</td>
+        <td>Description</td>
+        <td>Status</td>
+      </tr>
+      {listings.map((item) => (
+        <tr key={item.id}>
+          <td>{item.dateTime}</td>
+          <td>{item.description}</td>
+          <td>{item.status}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
+
         </div>
       </section>
     </main>
