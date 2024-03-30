@@ -30,10 +30,36 @@ function CreateListing() {
   };
 
   const onSubmit = async (values) => {
-    const listingId = await submitListingData(values);
-    if (listingId) {
-      navigate(`/listing/${listingId}`);
-    }
+    try {
+      let xmls =
+        '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+      <soapenv:Header/>\
+      <soapenv:Body>\
+      <gen:addPropertyRequest>\
+      <gen:property>\
+      <gen:id>2</gen:id>\
+      <gen:location>ZAHROUNI</gen:location>\
+      <gen:price>450</gen:price>\
+      <gen:title>belle S+2</gen:title>\
+      <gen:description>ba7dha train</gen:description>\
+      <gen:user_fk>5</gen:user_fk>\
+      <gen:status>RENT</gen:status>\
+      </gen:property>\
+      </gen:addPropertyRequest>\
+      </soapenv:Body>\
+      </soapenv:Envelope>';
+
+      axios
+        .post('http://localhost:8080/ws/property.wsdl', xmls, {
+          headers: { 'Content-Type': 'text/xml' }
+        })
+        .then((res) => {
+          console.log("ITEM ADDED:", res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {}
   };
 
   return (
