@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
+import axios from 'axios';
 
 import ListingInfoCard from './ListingInfoCard';
 import ListingGallery from './ListingGallery';
 import ListingLocation from './ListingLocation';
 import SaveButton from '../../components/SaveButton';
 import ContactOwnerModal from '../../components/ContactOwnerModal';
+import convert from 'xml-js';
 
 import IMG1 from "./../../assets/images/for-rent-category-bg.jpg"
 import IMG2 from "./../../assets/images/for-sale-category-bg.jpg"
@@ -71,26 +73,24 @@ function ListingDetails() {
           })
           .then((res) => {
             const data = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 2 }));
-            const propertiesArray =
-              data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getAllPropertiesResponse'][
-                'ns2:property'
-              ];
+            const property =
+            data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getPropertyResponse'][
+              'ns2:property'
+            ];
 
-            const arrayOfValues = propertiesArray.map((property) => {
-              const formattedObject = {};
-              for (const key in property) {
-                if (key.startsWith('ns2:')) {
-                  const newKey = key.slice(4);
-                  formattedObject[newKey] = property[key]['_text'];
-                }
+          
+            const formattedObject = {};
+            for (const key in property) {
+              if (key.startsWith('ns2:')) {
+                const newKey = key.slice(4);
+                formattedObject[newKey] = property[key]['_text'];
               }
-              return formattedObject;
-            });
+            }
+        
 
-            console.log(arrayOfValues);
-            console.log(data);
-            listing(arrayOfValues[0]);
-            setLoading(false);
+          console.log(data);
+          setListing(formattedObject);
+          setLoading(false);
           })
           .catch((err) => {
             console.log(err);
@@ -120,7 +120,7 @@ function ListingDetails() {
     <>
       <main>
         <div className="w-full h-[32rem] md:h-[35rem] lg:h-[40rem] bg-black">
-          <img alt="" src={imgUrls[0]} className="w-full h-full object-cover opacity-70" />
+          <img alt="" src={IMG1} className="w-full h-full object-cover opacity-70" />
         </div>
         <article className="min-h-screen max-w-7xl px-3 mx-auto lg:py-24 md:py-20 py-14">
           <section className="lg:grid lg:grid-cols-[1fr_448px] lg:gap-9 lg:items-start">
@@ -144,7 +144,7 @@ function ListingDetails() {
               {/* ) : null} */}
 
               <span className="block text-sm text-gray-500 mb-3 mt-4">
-                Posted on : {format(new Date.now(), 'd LLLL, y')}
+                Posted on : {format(new Date().getDate(), 'd LLLL, y')}
               </span>
               <address className="not-italic text-lg text-gray-900 mb-3">{location}</address>
               <h1 className="text-gray-900 font-extrabold text-5xl mb-8">{title}</h1>
