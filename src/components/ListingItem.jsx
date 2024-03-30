@@ -8,7 +8,7 @@ import { ReactComponent as CarIcon } from '../assets/svg/car.svg';
 import { ReactComponent as RulerIcon } from '../assets/svg/ruler.svg';
 import { ReactComponent as TrashIcon } from '../assets/svg/trash.svg';
 import { ReactComponent as EditIcon } from '../assets/svg/pen.svg';
-
+import IMG from "./../assets/images/for-rent-category-bg.jpg"
 import { formatPrice } from '../utils/utils';
 
 function ListingItem({ docID, item }) {
@@ -20,9 +20,9 @@ function ListingItem({ docID, item }) {
         <span className={`listing-type ${item.status.toLowerCase()}`}>{listingType}</span>
         <span className="listing-type bg-primary ml-auto">{listingPrice}</span>
       </div>
-      {/* <figure className="h-72 w-full">
-        <img src={imgUrls[0]} alt={title} className="w-full h-full object-cover" />
-      </figure> */}
+      <figure className="h-72 w-full">
+        <img src={IMG} alt={item.title} className="w-full h-full object-cover" />
+      </figure>
       <div className="card-body text-center p-4 md:p-8">
         <p className="text-sm mb-3">{item.location}</p>
         <h2 className="card-title text-gray-900">{item.title}</h2>

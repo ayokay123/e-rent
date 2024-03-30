@@ -5,6 +5,7 @@ import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import convert from 'xml-js';
+
 function MyListings() {
   const initalRender = useRef(true);
 
@@ -68,6 +69,7 @@ function MyListings() {
             console.log(arrayOfValues);
             console.log(data);
             setListings(arrayOfValues);
+            setFilteredListings(arrayOfValues)
           })
           .catch((err) => {
             console.log(err);
