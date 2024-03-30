@@ -58,7 +58,7 @@ function Navbar({ loggedIn }) {
             </li>
             <li>
               <Link to="/favorites" className="xl:px-0 px-4 nav-link">
-                Saved listings
+                Appointments
               </Link>
             </li>
             <li>

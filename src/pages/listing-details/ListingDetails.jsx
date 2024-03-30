@@ -57,30 +57,6 @@ function ListingDetails() {
   // );
 
   useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await axios.post('http://127.0.0.1:8088/apis/graphql', { 
-        query : ` {
-          findAllAppointments {
-            id
-            clientId
-            agentId
-            propertyId
-            dateTime
-            description
-            status
-          }
-        }
-    `
-      });
-      console.log(data)
-      return data;
-    };
-    fetchData();
-  }, []);
-
-
-
-  useEffect(() => {
     const getListing = async () => {
       setLoading(true);
       try {
@@ -124,15 +100,7 @@ function ListingDetails() {
     getListing();
   }, []);
 
-  const { id, location, price, title, description, status } = {
-    id: '1',
-    location: 'ZAHROUNI',
-    price: '450.0',
-    title: 'belle S+2',
-    description: 'ba7dha train',
-    user_fk: '5',
-    status: 'RENT'
-  };
+  const { id, location, price, title, description, status, user_fk } = listing;
 
   // if (loading) {
   //   return <ListingDetailsSkeleton />;
@@ -164,13 +132,16 @@ function ListingDetails() {
               {/* <SaveButton isFavorite={false} docID={listingId} /> */}
               {/* ) : null} */}
               {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
-              <button
-                type="button"
-                className="btn btn-accent ml-2"
-                aria-label="Contact owner"
-                onClick={() => setIsContactModalOpen(true)}>
-                <MailIcon className="w-6 h-6" />
-              </button>
+              {user.id !== user_fk && (
+                <button
+                  type="button"
+                  className="btn btn-accent ml-2"
+                  aria-label="Contact owner"
+                  onClick={() => setIsContactModalOpen(true)}>
+                  <MailIcon className="w-6 h-6" />
+                </button>
+              )}
+
               {/* ) : null} */}
 
               <span className="block text-sm text-gray-500 mb-3 mt-4">

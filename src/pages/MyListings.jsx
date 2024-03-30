@@ -5,6 +5,7 @@ import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import convert from 'xml-js';
+import useAuth from '../hooks/useAuth';
 
 function MyListings() {
   const initalRender = useRef(true);
@@ -14,6 +15,7 @@ function MyListings() {
   const [isConfirmationModalOpen, setisConfirmationModalOpen] = useState(false);
   const [listingTypeOption, setListingTypeOption] = useState('all');
   const [listingDocId, setListingDocId] = useState('');
+  const { user, login, signUp, logout } = useAuth();
 
   useEffect(() => {
     document.title = 'My Listings | Rent or Sell';
@@ -68,8 +70,8 @@ function MyListings() {
 
             console.log(arrayOfValues);
             console.log(data);
-            setListings(arrayOfValues);
-            setFilteredListings(arrayOfValues)
+            setListings(arrayOfValues.filter((item) => item.user_fk === user.id));
+            setFilteredListings(arrayOfValues.filter((item) => item.user_fk === user.id))
           })
           .catch((err) => {
             console.log(err);

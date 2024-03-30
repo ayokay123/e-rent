@@ -12,11 +12,7 @@ import { getListingsByCategory, getFilteredListings } from './filterFunctions';
 function Category() {
   const initalRender = useRef(true);
   const [sortBy, setSortBy] = useState('');
-  const [data, setData] = useState({
-    listings: [],
-    loading: true,
-    error: ''
-  });
+  const [listings, setListings] = useState([]);
 
   const { categoryName } = useParams();
 
@@ -36,24 +32,55 @@ function Category() {
   );
 
   useEffect(() => {
-    if (!initalRender.current) {
-      if (sortBy) {
-        setData({ listings: [], error: '', loading: true });
-        const filteredListingsData = async () => {
-          const [data, error] = await getFilteredListings(categoryName, sortBy);
-          setData({ listings: data, error, loading: false });
-        };
-        filteredListingsData();
-      } else {
-        getListingsByCategory();
+    const getAllListings = async () => {
+      try {
+        let xmls =
+          '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+          <soapenv:Header/>\
+          <soapenv:Body>\
+          <gen:getAllPropertiesRequest/>\
+          </soapenv:Body>\
+          </soapenv:Envelope>';
+
+        await axios
+          .post('http://localhost:8082/ws/property.wsdl', xmls, {
+            headers: { 'Content-Type': 'text/xml' }
+          })
+          .then((res) => {
+            const data = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 2 }));
+            const propertiesArray =
+              data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getAllPropertiesResponse'][
+                'ns2:property'
+              ];
+
+            const arrayOfValues = propertiesArray.map((property) => {
+              const formattedObject = {};
+              for (const key in property) {
+                if (key.startsWith('ns2:')) {
+                  const newKey = key.slice(4);
+                  formattedObject[newKey] = property[key]['_text'];
+                }
+              }
+              return formattedObject;
+            });
+
+            console.log(arrayOfValues);
+            console.log(data);
+            setListings(arrayOfValues.filter((item) => item.user_fk !== user.id && item.status === categoryName.toUpperCase()));
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.log(error);
       }
-    } else {
-      initalRender.current = false;
-    }
-  }, [sortBy]);
+    };
+    console.log('lelelela');
+    getAllListings();
+  }, [categoryName]);
+
 
   const pageTitle = categoryName === 'sale' ? 'For Sale' : 'For Rent';
-  const { loading, listings, error } = data;
 
   return (
     <main className="min-h-screen max-w-7xl px-3 mx-auto">
@@ -62,32 +89,8 @@ function Category() {
           <h1 className="text-3xl md:text-4xl font-extrabold text-center sm:mb-0 mb-5">
             {pageTitle}
           </h1>
-          <div className="flex items-center justify-start gap-5 flex-1 max-w-sm sm:mx-0 mx-auto">
-            <label htmlFor="sortby" className="label flex-shrink-0 text-sm">
-              Sort by
-            </label>
-            <select
-              name="sortby"
-              id="sortby"
-              className="select select-bordered flex-1 font-medium"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}>
-              <option value="">Default</option>
-              <option value="price-asc">Price : Low to High</option>
-              <option value="price-desc">Price : High to Low</option>
-              <option value="bedrooms">Bedrooms</option>
-              <option value="bathrooms">Bathrooms</option>
-              <option value="carspace">Car space</option>
-              <option value="listingSize">Area</option>
-            </select>
-          </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {loading &&
-            Array(9)
-              .fill()
-              .map((item) => <ListingItemSkeleton key={uuidv4()} />)}
-          {error && <p className="xl:col-span-3 md:col-span-2">{error}</p>}
           {listings.length > 0 &&
             listings.map(({ docID, data }) => {
               return (

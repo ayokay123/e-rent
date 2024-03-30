@@ -13,12 +13,10 @@ import Loader from './components/Loader';
 import { AuthProvider } from './hooks/useAuth';
 const Home = React.lazy(() => import('./pages/home/Home'));
 const Login = React.lazy(() => import('./pages/login/Login'));
-const ForgotPassword = React.lazy(() => import('./pages/forgot-password/ForgotPassword'));
 const Profile = React.lazy(() => import('./pages/profile/Profile'));
 const CreateListing = React.lazy(() => import('./pages/create-listing/CreateListing'));
 const ListingDetails = React.lazy(() => import('./pages/listing-details/ListingDetails'));
 const MyListings = React.lazy(() => import('./pages/MyListings'));
-const EditListing = React.lazy(() => import('./pages/edit-listing/EditListing'));
 const Category = React.lazy(() => import('./pages/category/Category'));
 const SavedListings = React.lazy(() => import('./pages/SavedListings'));
 
@@ -33,7 +31,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/profile" element={<PrivateRoute />}>
                   <Route path="/profile" element={<Profile />} />
                 </Route>
@@ -43,9 +40,6 @@ function App() {
                 <Route path="/listing/:listingId" element={<ListingDetails />} />
                 <Route path="/my-listings" element={<PrivateRoute />}>
                   <Route path="/my-listings" element={<MyListings />} />
-                </Route>
-                <Route path="/edit-listing/:listingId" element={<PrivateRoute />}>
-                  <Route path="/edit-listing/:listingId" element={<EditListing />} />
                 </Route>
                 <Route path="/favorites" element={<PrivateRoute />}>
                   <Route path="/favorites" element={<SavedListings />} />
