@@ -33,6 +33,36 @@ function MyListings() {
   // }, [snapshot]);
 
   useEffect(() => {
+    const getAllListings  =async() => {
+      try {
+        let xmls =
+          '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+          <soapenv:Header/>\
+          <soapenv:Body>\
+          <gen:getAllPropertiesRequest/>\
+          </soapenv:Body>\
+          </soapenv:Envelope>';
+    
+        await axios
+          .post('http://localhost:8082/ws/property.wsdl', xmls, {
+            headers: { 'Content-Type': 'text/xml' }
+          })
+          .then((res) => {
+            console.log("ITEMS:", res);
+            setListings(res)
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {}
+    }
+
+    getAllListings();
+  })
+
+
+
+  useEffect(() => {
     if (!initalRender.current) {
       if (listingTypeOption === 'all') {
         setFilteredListings(listings);
