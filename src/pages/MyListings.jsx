@@ -85,7 +85,7 @@ function MyListings() {
       if (listingTypeOption === 'all') {
         setFilteredListings(listings);
       } else {
-        const filterResults = listings.filter((listing) => listing.data.type === listingTypeOption);
+        const filterResults = listings.filter((listing) => listing.data.status === listingTypeOption);
         setFilteredListings(filterResults);
       }
     } else {
