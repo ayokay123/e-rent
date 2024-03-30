@@ -5,31 +5,22 @@ import { Link } from 'react-router-dom';
 
 import ListingsCarousel from '../../components/ListingsCarousel';
 
-import { db } from '../../firebase.config';
 
 function ForRentSection() {
   const [listings, setListings] = useState([]);
-  const [snapshot, loading, error] = useCollectionOnce(
-    query(
-      collection(db, 'listings'),
-      where('type', '==', 'rent'),
-      orderBy('postedOn', 'desc'),
-      limit(4)
-    )
-  );
 
-  useEffect(() => {
-    if (snapshot) {
-      const data = [];
-      snapshot.forEach((doc) => {
-        return data.push({
-          docID: doc.id,
-          data: doc.data()
-        });
-      });
-      setListings(data);
-    }
-  }, [snapshot]);
+  // useEffect(() => {
+  //   if (snapshot) {
+  //     const data = [];
+  //     snapshot.forEach((doc) => {
+  //       return data.push({
+  //         docID: doc.id,
+  //         data: doc.data()
+  //       });
+  //     });
+  //     setListings(data);
+  //   }
+  // }, [snapshot]);
 
   const listingsCarouselConfig = {
     slidesPerView: 1,
@@ -60,14 +51,14 @@ function ForRentSection() {
         </Link>
       </div>
       <div className="col-span-8">
-        {loading && (
+        {/* {loading && (
           <ListingsCarousel
             loading={loading}
             listings={Array(4).fill()}
             {...listingsCarouselConfig}
           />
         )}
-        {error && <p>{error.message}</p>}
+        {error && <p>{error.message}</p>} */}
         {listings.length > 0 && (
           <ListingsCarousel loading={loading} listings={listings} {...listingsCarouselConfig} />
         )}

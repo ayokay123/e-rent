@@ -1,14 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useCollection } from 'react-firebase-hooks/firestore';
-import { collection, query, where, deleteDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import { v4 as uuidv4 } from 'uuid';
 
 import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
-
-import { auth, db } from '../firebase.config';
 
 function MyListings() {
   const initalRender = useRef(true);
@@ -19,27 +14,23 @@ function MyListings() {
   const [listingTypeOption, setListingTypeOption] = useState('all');
   const [listingDocId, setListingDocId] = useState('');
 
-  const [snapshot, loading, error] = useCollection(
-    query(collection(db, 'listings'), where('userRef', '==', auth.currentUser.uid))
-  );
-
   useEffect(() => {
     document.title = 'My Listings | Rent or Sell';
   }, []);
 
-  useEffect(() => {
-    if (snapshot) {
-      const listingsData = [];
-      snapshot.forEach((doc) => {
-        return listingsData.push({
-          docID: doc.id,
-          data: doc.data()
-        });
-      });
-      setListings(listingsData);
-      setFilteredListings(listingsData);
-    }
-  }, [snapshot]);
+  // useEffect(() => {
+  //   if (snapshot) {
+  //     const listingsData = [];
+  //     snapshot.forEach((doc) => {
+  //       return listingsData.push({
+  //         docID: doc.id,
+  //         data: doc.data()
+  //       });
+  //     });
+  //     setListings(listingsData);
+  //     setFilteredListings(listingsData);
+  //   }
+  // }, [snapshot]);
 
   useEffect(() => {
     if (!initalRender.current) {
@@ -56,11 +47,11 @@ function MyListings() {
 
   const deleteListing = async (docID) => {
     try {
-      await deleteDoc(doc(db, 'listings', docID));
-      const newFilteredListings = filteredListings.filter((listing) => listing.docID !== docID);
-      setFilteredListings(newFilteredListings);
-      const newListings = listings.filter((listing) => listing.docID !== docID);
-      setListings(newListings);
+      // await deleteDoc(doc(db, 'listings', docID));
+      // const newFilteredListings = filteredListings.filter((listing) => listing.docID !== docID);
+      // setFilteredListings(newFilteredListings);
+      // const newListings = listings.filter((listing) => listing.docID !== docID);
+      // setListings(newListings);
       toast.success('Listing deleted successfully');
     } catch (error) {
       toast.error(error.message);
@@ -97,12 +88,7 @@ function MyListings() {
             </select>
           </div>
           <div className="grid grid-cols-1 gap-4 xl:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {loading &&
-              Array(9)
-                .fill()
-                .map((item) => <ListingItemSkeleton key={uuidv4()} />)}
-            {error && <p className="xl:col-span-3 md:col-span-2">{error}</p>}
-            {filteredListings.length === 0 && !error ? (
+            {filteredListings.length === 0 ? (
               <p className="xl:col-span-3 md:col-span-2">No listings to show.</p>
             ) : null}
             {filteredListings.length > 0 &&
@@ -111,7 +97,7 @@ function MyListings() {
                   key={docID}
                   docID={docID}
                   deleteListing={() => showConfirmationModal(docID)}
-                  editListing={auth.currentUser.uid === data.userRef}
+                  // editListing={auth.currentUser.uid === data.userRef}
                   {...data}
                 />
               ))}

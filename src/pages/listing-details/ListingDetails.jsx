@@ -1,6 +1,5 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
 import { format } from 'date-fns';
 
 import ListingInfoCard from './ListingInfoCard';
@@ -11,11 +10,6 @@ import ContactOwnerModal from '../../components/ContactOwnerModal';
 
 import { ReactComponent as MailIcon } from '../../assets/svg/mail.svg';
 
-import { FavoritesContext } from '../../context/FavoritesContext';
-
-import useAbortableEffect from '../../hooks/useAbortableEffect';
-
-import { db, auth } from '../../firebase.config';
 import ListingDetailsSkeleton from '../../skeletons/ListingDetailsSkeleton';
 
 function ListingDetails() {
@@ -23,38 +17,37 @@ function ListingDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const { checkFavorite } = useContext(FavoritesContext);
 
   const { listingId } = useParams();
 
-  useAbortableEffect(
-    (status) => {
-      const getListingData = async () => {
-        try {
-          const docRef = doc(db, 'listings', listingId);
-          const docSnap = await getDoc(docRef);
-          if (!status.aborted) {
-            if (docSnap.exists()) {
-              setListing(docSnap.data());
-            } else {
-              throw new Error('Listing does not exist');
-            }
-          }
-        } catch (error) {
-          if (!status.aborted) {
-            setError(error.message);
-          }
-        } finally {
-          if (!status.aborted) {
-            setLoading(false);
-          }
-        }
-      };
+  // useAbortableEffect(
+  //   (status) => {
+  //     const getListingData = async () => {
+  //       try {
+  //         const docRef = doc(db, 'listings', listingId);
+  //         const docSnap = await getDoc(docRef);
+  //         if (!status.aborted) {
+  //           if (docSnap.exists()) {
+  //             setListing(docSnap.data());
+  //           } else {
+  //             throw new Error('Listing does not exist');
+  //           }
+  //         }
+  //       } catch (error) {
+  //         if (!status.aborted) {
+  //           setError(error.message);
+  //         }
+  //       } finally {
+  //         if (!status.aborted) {
+  //           setLoading(false);
+  //         }
+  //       }
+  //     };
 
-      getListingData();
-    },
-    [listingId]
-  );
+  //     getListingData();
+  //   },
+  //   [listingId]
+  // );
 
   const { address, description, geolocation, imgUrls, postedOn, title } = listing;
 
@@ -84,10 +77,10 @@ function ListingDetails() {
               </div>
             </div>
             <div className="lg:order-1">
-              {auth.currentUser && auth.currentUser.uid !== listing.userRef ? (
-                <SaveButton isFavorite={checkFavorite(listingId)} docID={listingId} />
-              ) : null}
-              {auth.currentUser && auth.currentUser.uid !== listing.userRef ? (
+              {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
+                <SaveButton isFavorite={false} docID={listingId} />
+              {/* ) : null} */}
+              {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
                 <button
                   type="button"
                   className="btn btn-accent ml-2"
@@ -95,7 +88,7 @@ function ListingDetails() {
                   onClick={() => setIsContactModalOpen(true)}>
                   <MailIcon className="w-6 h-6" />
                 </button>
-              ) : null}
+              {/* ) : null} */}
 
               <span className="block text-sm text-gray-500 mb-3 mt-4">
                 Posted on : {format(postedOn.toDate(), 'd LLLL, y')}

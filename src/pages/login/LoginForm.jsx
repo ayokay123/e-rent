@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { toast } from 'react-toastify';
 
 import TextInput from '../../components/TextInput';
-
-import { auth } from '../../firebase.config';
+import useAuth from '../../hooks/useAuth';
+import { useAuthentication } from '../../hooks/api/useAuthentification';
 
 const initialValues = {
   email: '',
@@ -20,10 +19,20 @@ const validationSchema = Yup.object({
 
 function LoginForm() {
   const navigate = useNavigate();
+  const { user, loading, error, login, signUp, logout } = useAuth();
+  const { trigger } = useAuthentication();
 
   const onSubmit = async ({ email, password }) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await trigger({
+        email,
+        password
+      });
+      login({
+        password,
+        email
+      });
+
       navigate('/profile');
     } catch (error) {
       toast.error('Invalid email or password');

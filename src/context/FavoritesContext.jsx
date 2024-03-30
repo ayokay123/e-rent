@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { toast } from 'react-toastify';
-
+ 
 import { db, auth } from '../firebase.config';
 
 export const FavoritesContext = createContext(null);

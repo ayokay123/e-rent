@@ -1,30 +1,16 @@
 import { useState } from 'react';
-import { updateProfile } from 'firebase/auth';
-import { doc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
 import TextInput from '../../components/TextInput';
 
-import { auth, db } from '../../firebase.config';
-
 function EditProfileForm() {
   const [isEditing, setIsEditing] = useState(false);
 
   const saveDetails = async ({ fullname }) => {
     try {
-      if (auth.currentUser.displayName !== fullname) {
-        await updateProfile(auth.currentUser, {
-          displayName: fullname
-        });
-
-        const userRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userRef, {
-          fullname
-        });
         toast.success('Profile updated successfully');
-      }
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -35,7 +21,7 @@ function EditProfileForm() {
   return (
     <Formik
       initialValues={{
-        fullname: auth.currentUser.displayName
+        fullname: "ISMAIL HAMDI"
       }}
       validationSchema={Yup.object({
         fullname: Yup.string().required('Required')
@@ -55,24 +41,8 @@ function EditProfileForm() {
             </div>
             <div className="mb-4">
               <span className="form-label">Email</span>
-              <p className="text-lg font-medium">{auth.currentUser.email}</p>
+              <p className="text-lg font-medium">ismailayokay@gmail.com</p>
             </div>
-            {!isEditing && (
-              <button
-                type="submit"
-                className="btn btn-primary btn-block mx-0"
-                onClick={() => setIsEditing(true)}>
-                Edit
-              </button>
-            )}
-            {isEditing && (
-              <button
-                type="submit"
-                className="btn btn-primary btn-block mx-0"
-                disabled={isSubmitting}>
-                Update
-              </button>
-            )}
           </Form>
         );
       }}

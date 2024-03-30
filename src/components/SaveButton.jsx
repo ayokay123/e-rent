@@ -4,13 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { ReactComponent as HeartOutLineIcon } from '../assets/svg/heart-outline.svg';
 import { ReactComponent as HeartFilledIcon } from '../assets/svg/heart-filled.svg';
 
-import { FavoritesContext } from '../context/FavoritesContext';
-
-import { auth } from '../firebase.config';
 
 function SaveButton({ docID, isFavorite }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addToFavorites, removeFromFavorites } = useContext(FavoritesContext);
 
   const navigate = useNavigate();
 
@@ -19,13 +15,6 @@ function SaveButton({ docID, isFavorite }) {
       navigate('/login');
       return;
     }
-    setIsSubmitting(true);
-    if (isFavorite) {
-      await removeFromFavorites(docID);
-    } else {
-      await addToFavorites(docID);
-    }
-    setIsSubmitting(false);
   };
 
   return (

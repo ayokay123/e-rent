@@ -2,25 +2,12 @@ import { createPortal } from 'react-dom';
 import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 import TextAreaInput from './TextAreaInput';
-
-import { auth, db } from '../firebase.config';
 
 function ContactOwnerModal({ showModal, hideModal, docID, userRef, listingTitle }) {
   const onSubmit = async ({ message }) => {
     try {
-      const data = {
-        sentBy: auth.currentUser.uid,
-        sentTo: userRef,
-        listingRef: docID,
-        listingTitle,
-        message,
-        sentAt: serverTimestamp()
-      };
-      const messagesRef = collection(db, 'messages');
-      await addDoc(messagesRef, data);
       toast.success('Message sent successfully');
       hideModal();
     } catch (error) {

@@ -1,15 +1,8 @@
-import { useState, useEffect, useContext, useRef } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
-
-import useAbortableEffect from '../hooks/useAbortableEffect';
-
-import { FavoritesContext } from '../context/FavoritesContext';
-
-import { db } from '../firebase.config';
 
 function SavedListings() {
   const initalRender = useRef(true);
@@ -19,29 +12,10 @@ function SavedListings() {
   const [error, setError] = useState('');
   const [listingTypeOption, setListingTypeOption] = useState('all');
 
-  const { favorites, checkFavorite } = useContext(FavoritesContext);
 
   useEffect(() => {
     document.title = 'Saved Listings | Rent or Sell';
   }, []);
-
-  useAbortableEffect(
-    (status) => {
-      const getSavedListings = async () => {
-        const savedListingDocs = await Promise.all(
-          favorites.map((docID) => getDoc(doc(db, 'listings', docID)))
-        ).catch((error) => setError(error.message));
-        const savedListings = savedListingDocs.map((doc) => ({ docID: doc.id, data: doc.data() }));
-        if (!status.aborted) {
-          setListings(savedListings);
-          setFilteredListings(savedListings);
-          setLoading(false);
-        }
-      };
-      getSavedListings();
-    },
-    [favorites]
-  );
 
   useEffect(() => {
     if (!initalRender.current) {
@@ -81,7 +55,7 @@ function SavedListings() {
           ) : null}
           {filteredListings.length > 0 &&
             filteredListings.map(({ docID, data }) => (
-              <ListingItem key={docID} docID={docID} isFavorite={checkFavorite(docID)} {...data} />
+              <ListingItem key={docID} docID={docID} {...data} />
             ))}
         </div>
       </section>

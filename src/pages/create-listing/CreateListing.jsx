@@ -78,71 +78,6 @@ function CreateListing() {
                   </div>
                   <div>
                     <TextAreaInput label="Address" id="address" name="address" />
-                    <div className="inline-block mt-2">
-                      <ToggleInput
-                        label="Enter geolocation manually"
-                        id="customGeolocationEnabled"
-                        name="customGeolocationEnabled"
-                      />
-                    </div>
-                  </div>
-                  {values.customGeolocationEnabled && (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <TextInput
-                          label="Latitude"
-                          id="latitude"
-                          name="geolocation.latitude"
-                          type="text"
-                        />
-                      </div>
-                      <div>
-                        <TextInput
-                          label="Longitude"
-                          id="longitude"
-                          name="geolocation.longitude"
-                          type="text"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <div className="grid md:grid-cols-4 grid-cols-2 gap-4">
-                    <div>
-                      <TextInput
-                        label="No. of bedrooms"
-                        id="bedrooms"
-                        name="bedrooms"
-                        type="number"
-                        min="1"
-                      />
-                    </div>
-                    <div>
-                      <TextInput
-                        label="No. of bathrooms"
-                        id="bathrooms"
-                        name="bathrooms"
-                        type="number"
-                        min="1"
-                      />
-                    </div>
-                    <div>
-                      <TextInput
-                        label="Car space"
-                        id="carspace"
-                        name="carspace"
-                        type="number"
-                        min="0"
-                      />
-                    </div>
-                    <div>
-                      <TextInput
-                        label="Area (in SQFT)"
-                        id="listingSize"
-                        name="listingSize"
-                        type="number"
-                        min="0"
-                      />
-                    </div>
                   </div>
                   <div>
                     <TextInput
@@ -152,36 +87,6 @@ function CreateListing() {
                       type="number"
                       min="0"
                     />
-                  </div>
-                  <div>
-                    <FileInput
-                      maxSize={2097152}
-                      accept="image/jpg, image/png, image/jpeg"
-                      onDrop={(acceptedFiles) => onDropHanlder(acceptedFiles, setFieldValue)}
-                      dropZoneText="Select images (Max file size: 2MB)"
-                      id="images"
-                      name="images"
-                      label="Upload listing images (.jpg, .png)"
-                    />
-                    {imageThumbs.length > 0 && (
-                      <ul className="flex items-center justify-start flex-wrap gap-4 mt-4">
-                        {imageThumbs.map((file) => (
-                          <li key={uuidv4()} className="flex-shrink-0 relative w-24 h-24">
-                            <UploadedImageThumb
-                              src={file.preview}
-                              onClick={() =>
-                                deleteSelectedImage(
-                                  imageThumbs,
-                                  file.path,
-                                  setFieldValue,
-                                  setImageThumbs
-                                )
-                              }
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button

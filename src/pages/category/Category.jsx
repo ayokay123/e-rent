@@ -5,8 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import ListingItem from '../../components/ListingItem';
 import ListingItemSkeleton from '../../skeletons/ListingItemSkeleton';
 
-import { FavoritesContext } from '../../context/FavoritesContext';
-
 import useAbortableEffect from '../../hooks/useAbortableEffect';
 
 import { getListingsByCategory, getFilteredListings } from './filterFunctions';
@@ -20,21 +18,19 @@ function Category() {
     error: ''
   });
 
-  const { checkFavorite } = useContext(FavoritesContext);
-
   const { categoryName } = useParams();
 
   useAbortableEffect(
     (status) => {
       document.title =
         categoryName === 'sale' ? 'For Sale | Rent or Sell' : 'For Rent | Rent or Sell';
-      const getListingsData = async () => {
-        const [data, error] = await getListingsByCategory(categoryName);
-        if (!status.aborted) {
-          setData({ listings: data, error, loading: false });
-        }
-      };
-      getListingsData();
+      // const getListingsData = async () => {
+      //   const [data, error] = await getListingsByCategory(categoryName);
+      //   if (!status.aborted) {
+      //     setData({ listings: data, error, loading: false });
+      //   }
+      // };
+      // getListingsData();
     },
     [categoryName]
   );
@@ -98,7 +94,7 @@ function Category() {
                 <ListingItem
                   key={docID}
                   docID={docID}
-                  isFavorite={checkFavorite(docID)}
+                  isFavorite={false}
                   {...data}
                 />
               );
