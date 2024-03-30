@@ -8,6 +8,9 @@ import ListingLocation from './ListingLocation';
 import SaveButton from '../../components/SaveButton';
 import ContactOwnerModal from '../../components/ContactOwnerModal';
 
+import IMG1 from "./../../assets/images/for-rent-category-bg.jpg"
+import IMG2 from "./../../assets/images/for-sale-category-bg.jpg"
+
 import { ReactComponent as MailIcon } from '../../assets/svg/mail.svg';
 
 import ListingDetailsSkeleton from '../../skeletons/ListingDetailsSkeleton';
@@ -48,8 +51,58 @@ function ListingDetails() {
   //   },
   //   [listingId]
   // );
+  useEffect(() => {
+    const getListing = async () => {
+      setLoading(true);
+      try {
+        let xmls =
+          `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+          <soapenv:Header/>\
+          <soapenv:Body>\
+          <gen:getPropertyRequest>\
+          <gen:id>${listingId}</gen:id>\
+          </gen:getPropertyRequest>\
+          </soapenv:Body>\
+          </soapenv:Envelope>`;
 
-  const { address, description, geolocation, imgUrls, postedOn, title } = listing;
+        await axios
+          .post('http://localhost:8082/ws/property.wsdl', xmls, {
+            headers: { 'Content-Type': 'text/xml' }
+          })
+          .then((res) => {
+            const data = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 2 }));
+            const propertiesArray =
+              data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getAllPropertiesResponse'][
+                'ns2:property'
+              ];
+
+            const arrayOfValues = propertiesArray.map((property) => {
+              const formattedObject = {};
+              for (const key in property) {
+                if (key.startsWith('ns2:')) {
+                  const newKey = key.slice(4);
+                  formattedObject[newKey] = property[key]['_text'];
+                }
+              }
+              return formattedObject;
+            });
+
+            console.log(arrayOfValues);
+            console.log(data);
+            listing(arrayOfValues[0]);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.log(error);
+      } 
+    };
+    getListing();
+  }, []);
+
+  const { id, location, price, title, description, status } = listing;
 
   if (loading) {
     return <ListingDetailsSkeleton />;
@@ -78,7 +131,7 @@ function ListingDetails() {
             </div>
             <div className="lg:order-1">
               {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
-                <SaveButton isFavorite={false} docID={listingId} />
+                {/* <SaveButton isFavorite={false} docID={listingId} /> */}
               {/* ) : null} */}
               {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
                 <button
@@ -91,22 +144,16 @@ function ListingDetails() {
               {/* ) : null} */}
 
               <span className="block text-sm text-gray-500 mb-3 mt-4">
-                Posted on : {format(postedOn.toDate(), 'd LLLL, y')}
+                Posted on : {format(new Date.now(), 'd LLLL, y')}
               </span>
-              <address className="not-italic text-lg text-gray-900 mb-3">{address}</address>
+              <address className="not-italic text-lg text-gray-900 mb-3">{location}</address>
               <h1 className="text-gray-900 font-extrabold text-5xl mb-8">{title}</h1>
               <p className="text-gray-600 leading-loose">{description}</p>
             </div>
           </section>
           <section className="lg:pt-24 md:pt-20 pt-14">
             <h2 className="text-gray-900 font-extrabold text-3xl mb-4">Gallery</h2>
-            <ListingGallery imgUrls={imgUrls} title={title} />
-          </section>
-          <section className="lg:pt-24 md:pt-20 pt-14">
-            <h2 className="text-gray-900 font-extrabold text-3xl mb-4">Location</h2>
-            <div className="w-full h-[40rem]">
-              <ListingLocation {...geolocation} />
-            </div>
+            <ListingGallery imgUrls={[IMG1, IMG2]} title={title} />
           </section>
         </article>
       </main>
