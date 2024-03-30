@@ -2,14 +2,45 @@ import { createPortal } from 'react-dom';
 import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-
+import DateTimePicker from 'react-datetime-picker';
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
+import axios from 'axios';
 import TextAreaInput from './TextAreaInput';
+import { useState } from 'react';
 
 function ContactOwnerModal({ showModal, hideModal, docID, userRef, listingTitle }) {
-  const onSubmit = async ({ message }) => {
+  const [value, onChange] = useState(new Date());
+
+  const onSubmit = async ({ description }) => {
     try {
+      const { data } = await axios.post('http://127.0.0.1:8088/apis/graphql', {
+        query: `
+          mutation {
+            createAppointment(
+              clientId: 1,
+              agentId: 2,
+              propertyId: 55,
+              dateTime: "2024-03-28T09:00:00Z",
+              description: "Description of the appointment"
+            ) {
+              id
+              clientId
+              agentId
+              propertyId
+              dateTime
+              description
+              status
+            }
+          }
+        `
+      });
+
+      console.log('NEW APPOINTENTMENT:', data);
+
       toast.success('Message sent successfully');
-      hideModal();
+      // hideModal();
     } catch (error) {
       toast.error(error.message);
     }
@@ -27,16 +58,14 @@ function ContactOwnerModal({ showModal, hideModal, docID, userRef, listingTitle 
           <h2 className="text-gray-900 font-extrabold text-3xl mb-4 text-center">Contact owner</h2>
           <Formik
             initialValues={{
-              message: ''
+              description: ''
             }}
-            validationSchema={Yup.object({
-              message: Yup.string().required('Required')
-            })}
             onSubmit={onSubmit}>
             {({ isSubmitting }) => {
               return (
                 <Form>
-                  <TextAreaInput label="Your message" id="message" name="message" />
+                  <TextAreaInput label="Your description" id="description" name="description" />
+                  <DateTimePicker onChange={onChange} value={value} disableCalendar disableClock />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <button type="button" className="btn btn-ghost" onClick={hideModal}>
                       Cancel

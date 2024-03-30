@@ -10,8 +10,8 @@ import SaveButton from '../../components/SaveButton';
 import ContactOwnerModal from '../../components/ContactOwnerModal';
 import convert from 'xml-js';
 
-import IMG1 from "./../../assets/images/for-rent-category-bg.jpg"
-import IMG2 from "./../../assets/images/for-sale-category-bg.jpg"
+import IMG1 from './../../assets/images/for-rent-category-bg.jpg';
+import IMG2 from './../../assets/images/for-sale-category-bg.jpg';
 
 import { ReactComponent as MailIcon } from '../../assets/svg/mail.svg';
 
@@ -22,6 +22,8 @@ function ListingDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  console.log(format(new Date(), 'd LLLL, y'));
 
   const { listingId } = useParams();
 
@@ -57,8 +59,7 @@ function ListingDetails() {
     const getListing = async () => {
       setLoading(true);
       try {
-        let xmls =
-          `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+        let xmls = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
           <soapenv:Header/>\
           <soapenv:Body>\
           <gen:getPropertyRequest>\
@@ -74,11 +75,8 @@ function ListingDetails() {
           .then((res) => {
             const data = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 2 }));
             const property =
-            data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getPropertyResponse'][
-              'ns2:property'
-            ];
+              data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getPropertyResponse']['ns2:property'];
 
-          
             const formattedObject = {};
             for (const key in property) {
               if (key.startsWith('ns2:')) {
@@ -86,35 +84,42 @@ function ListingDetails() {
                 formattedObject[newKey] = property[key]['_text'];
               }
             }
-        
 
-          console.log(data);
-          setListing(formattedObject);
-          setLoading(false);
+            console.log(data);
+            setListing(formattedObject);
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
           });
       } catch (error) {
         console.log(error);
-      } 
+      }
     };
     getListing();
   }, []);
 
-  const { id, location, price, title, description, status } = listing;
+  const { id, location, price, title, description, status } = {
+    id: '1',
+    location: 'ZAHROUNI',
+    price: '450.0',
+    title: 'belle S+2',
+    description: 'ba7dha train',
+    user_fk: '5',
+    status: 'RENT'
+  };
 
-  if (loading) {
-    return <ListingDetailsSkeleton />;
-  }
+  // if (loading) {
+  //   return <ListingDetailsSkeleton />;
+  // }
 
-  if (error) {
-    return (
-      <div className="min-h-screen max-w-7xl mx-auto px-3 lg:py-24 md:py-20 py-14 text-center">
-        <p>Listing does not exist.</p>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen max-w-7xl mx-auto px-3 lg:py-24 md:py-20 py-14 text-center">
+  //       <p>Listing does not exist.</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -131,20 +136,20 @@ function ListingDetails() {
             </div>
             <div className="lg:order-1">
               {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
-                {/* <SaveButton isFavorite={false} docID={listingId} /> */}
+              {/* <SaveButton isFavorite={false} docID={listingId} /> */}
               {/* ) : null} */}
               {/* {auth.currentUser && auth.currentUser.uid !== listing.userRef ? ( */}
-                <button
-                  type="button"
-                  className="btn btn-accent ml-2"
-                  aria-label="Contact owner"
-                  onClick={() => setIsContactModalOpen(true)}>
-                  <MailIcon className="w-6 h-6" />
-                </button>
+              <button
+                type="button"
+                className="btn btn-accent ml-2"
+                aria-label="Contact owner"
+                onClick={() => setIsContactModalOpen(true)}>
+                <MailIcon className="w-6 h-6" />
+              </button>
               {/* ) : null} */}
 
               <span className="block text-sm text-gray-500 mb-3 mt-4">
-                Posted on : {format(new Date().getDate(), 'd LLLL, y')}
+                Posted on : {format(new Date(), 'd LLLL, y')}
               </span>
               <address className="not-italic text-lg text-gray-900 mb-3">{location}</address>
               <h1 className="text-gray-900 font-extrabold text-5xl mb-8">{title}</h1>
