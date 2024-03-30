@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
-
+import  axios  from 'axios';
 import TextInput from '../../components/TextInput';
 import TextAreaInput from '../../components/TextAreaInput';
 import ToggleInput from '../../components/ToggleInput';
@@ -30,6 +30,7 @@ function CreateListing() {
   };
 
   const onSubmit = async (values) => {
+    console.log('hello', values)
     try {
       let xmls =
         '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
@@ -50,7 +51,7 @@ function CreateListing() {
       </soapenv:Envelope>';
 
       axios
-        .post('http://localhost:8080/ws/property.wsdl', xmls, {
+        .post('http://localhost:8082/ws/property.wsdl', xmls, {
           headers: { 'Content-Type': 'text/xml' }
         })
         .then((res) => {
@@ -69,7 +70,6 @@ function CreateListing() {
         <div className="max-w-3xl mx-auto">
           <Formik
             initialValues={initialValues}
-            validationSchema={validationSchema}
             onSubmit={onSubmit}>
             {({ isSubmitting, values, resetForm, setFieldValue }) => {
               return (
