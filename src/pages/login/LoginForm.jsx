@@ -26,14 +26,16 @@ function LoginForm() {
     console.log('im here')
     console.log(email)
     try {
-      await trigger({
+     const response =  await trigger({
         email,
         password
       });
-      login({
+     console.log(response) 
+     login(
         password,
-        email
-      });
+        email, 
+        response.user.id
+      );
 
       navigate('/profile');
     } catch (error) {

@@ -35,11 +35,11 @@ export function AuthProvider({
     if (error) setError(undefined);
   }, [location.pathname]);
 
-  function login(email, password) {
+  function login(email, password,id) {
     setLoading(true);
 
-    setUser({ email, password });
-    setItem("user", JSON.stringify({ email, password }));
+    setUser({ email, password, id });
+    setItem("user", JSON.stringify({ email, password, id }));
     // sessionsApi.login({ email, password })
     //   .then((user) => {
     //     setUser(user);

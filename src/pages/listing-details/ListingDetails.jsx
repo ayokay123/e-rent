@@ -55,6 +55,31 @@ function ListingDetails() {
   //   },
   //   [listingId]
   // );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await axios.post('http://127.0.0.1:8088/apis/graphql', { 
+        query : ` {
+          findAllAppointments {
+            id
+            clientId
+            agentId
+            propertyId
+            dateTime
+            description
+            status
+          }
+        }
+    `
+      });
+      console.log(data)
+      return data;
+    };
+    fetchData();
+  }, []);
+
+
+
   useEffect(() => {
     const getListing = async () => {
       setLoading(true);
@@ -174,3 +199,18 @@ function ListingDetails() {
 }
 
 export default ListingDetails;
+/*{
+  "data": {
+      "findAllAppointments": [
+          {
+              "id": "202",
+              "clientId": "1",
+              "agentId": "5",
+              "propertyId": "1",
+              "dateTime": "2024-03-28T10:15:30",
+              "description": "sq",
+              "status": "PENDING"
+          }
+      ]
+  }
+}*/

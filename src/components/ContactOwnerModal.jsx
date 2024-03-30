@@ -2,28 +2,33 @@ import { createPortal } from 'react-dom';
 import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import useAuth from './../hooks/useAuth';
 import DateTimePicker from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
 import axios from 'axios';
 import TextAreaInput from './TextAreaInput';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function ContactOwnerModal({ showModal, hideModal, docID, userRef, listingTitle }) {
   const [value, onChange] = useState(new Date());
+  const { user, loading, error, login, signUp, logout } = useAuth();
 
+ 
   const onSubmit = async ({ description }) => {
     try {
+      console.log(user)
+     
       const { data } = await axios.post('http://127.0.0.1:8088/apis/graphql', {
         query: `
           mutation {
             createAppointment(
-              clientId: 1,
-              agentId: 2,
-              propertyId: 55,
-              dateTime: "2024-03-28T09:00:00Z",
-              description: "Description of the appointment"
+              clientId: ${user.id},
+              agentId: 5,
+              propertyId: ${docID},
+              dateTime: "${value.toISOString().slice(0, 19).replace('T', ' ')}",
+              description: "${description}"
             ) {
               id
               clientId
@@ -89,3 +94,4 @@ function ContactOwnerModal({ showModal, hideModal, docID, userRef, listingTitle 
 }
 
 export default ContactOwnerModal;
+
