@@ -30,25 +30,24 @@ function CreateListing() {
   };
 
   const onSubmit = async (values) => {
-    console.log('hello', values)
     try {
       let xmls =
-        '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
+        `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
       <soapenv:Header/>\
       <soapenv:Body>\
       <gen:addPropertyRequest>\
       <gen:property>\
       <gen:id>2</gen:id>\
-      <gen:location>ZAHROUNI</gen:location>\
-      <gen:price>450</gen:price>\
-      <gen:title>belle S+2</gen:title>\
-      <gen:description>ba7dha train</gen:description>\
+      <gen:location>${values.address}</gen:location>\
+      <gen:price>${values.regularPrice}</gen:price>\
+      <gen:title>${values.title}</gen:title>\
+      <gen:description>${values.description}</gen:description>\
       <gen:user_fk>5</gen:user_fk>\
-      <gen:status>RENT</gen:status>\
+      <gen:status>${values.type}</gen:status>\
       </gen:property>\
       </gen:addPropertyRequest>\
       </soapenv:Body>\
-      </soapenv:Envelope>';
+      </soapenv:Envelope>`;
 
       axios
         .post('http://localhost:8082/ws/property.wsdl', xmls, {
@@ -56,6 +55,7 @@ function CreateListing() {
         })
         .then((res) => {
           console.log("ITEM ADDED:", res);
+          navigate("/my-listings")
         })
         .catch((err) => {
           console.log(err);
@@ -84,15 +84,15 @@ function CreateListing() {
                         id="forSale"
                         label="For sale"
                         name="type"
-                        value="sale"
-                        checked={values.type === 'sale'}
+                        value="SALE"
+                        checked={values.type === 'SALE'}
                       />
                       <RadioInput
                         id="forRent"
                         label="For rent"
                         name="type"
-                        value="rent"
-                        checked={values.type === 'rent'}
+                        value="RENT"
+                        checked={values.type === 'RENT'}
                       />
                     </div>
                   </div>

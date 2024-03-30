@@ -4,10 +4,9 @@ import axios from 'axios';
 import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
-import convert from "xml-js"
+import convert from 'xml-js';
 function MyListings() {
   const initalRender = useRef(true);
-  
 
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
@@ -34,7 +33,7 @@ function MyListings() {
   // }, [snapshot]);
 
   useEffect(() => {
-    const getAllListings  =async() => {
+    const getAllListings = async () => {
       try {
         let xmls =
           '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:gen="http://www.baeldung.com/springsoap/gen">\
@@ -43,41 +42,43 @@ function MyListings() {
           <gen:getAllPropertiesRequest/>\
           </soapenv:Body>\
           </soapenv:Envelope>';
-    
+
         await axios
           .post('http://localhost:8082/ws/property.wsdl', xmls, {
             headers: { 'Content-Type': 'text/xml' }
           })
           .then((res) => {
-            const data = JSON.parse(
-              convert.xml2json(res.data, { compact: true, spaces: 2 }))
-              const propertiesArray = data["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns2:getAllPropertiesResponse"]["ns2:property"];
- 
-              const arrayOfValues = propertiesArray.map(property => {
-                  const formattedObject = {};
-                  for (const key in property) {
-                      if (key.startsWith("ns2:")) {
-                          const newKey = key.slice(4);
-                          formattedObject[newKey] = property[key]["_text"];
-                      }
-                  }
-                  return formattedObject;
-              });
-               
-              console.log(arrayOfValues)
-              console.log(data)
-            setListings(formattedObject)
+            const data = JSON.parse(convert.xml2json(res.data, { compact: true, spaces: 2 }));
+            const propertiesArray =
+              data['SOAP-ENV:Envelope']['SOAP-ENV:Body']['ns2:getAllPropertiesResponse'][
+                'ns2:property'
+              ];
+
+            const arrayOfValues = propertiesArray.map((property) => {
+              const formattedObject = {};
+              for (const key in property) {
+                if (key.startsWith('ns2:')) {
+                  const newKey = key.slice(4);
+                  formattedObject[newKey] = property[key]['_text'];
+                }
+              }
+              return formattedObject;
+            });
+
+            console.log(arrayOfValues);
+            console.log(data);
+            setListings(arrayOfValues);
           })
           .catch((err) => {
             console.log(err);
           });
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    console.log('lelelela')
+    };
+    console.log('lelelela');
     getAllListings();
-  },[] )
+  }, []);
 
   useEffect(() => {
     if (!initalRender.current) {
@@ -130,8 +131,8 @@ function MyListings() {
               value={listingTypeOption}
               onChange={(e) => setListingTypeOption(e.target.value)}>
               <option value="all">All</option>
-              <option value="sale">For Sale</option>
-              <option value="rent">For Rent</option>
+              <option value="SALE">For Sale</option>
+              <option value="RENT">For Rent</option>
             </select>
           </div>
           <div className="grid grid-cols-1 gap-4 xl:gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,13 +140,11 @@ function MyListings() {
               <p className="xl:col-span-3 md:col-span-2">No listings to show.</p>
             ) : null}
             {filteredListings.length > 0 &&
-              filteredListings.map(({ docID, data }) => (
+              filteredListings.map((item) => (
                 <ListingItem
-                  key={docID}
-                  docID={docID}
-                  deleteListing={() => showConfirmationModal(docID)}
-                  // editListing={auth.currentUser.uid === data.userRef}
-                  {...data}
+                  key={item.id}
+                  docID={item.id}
+                  item={item}
                 />
               ))}
           </div>
