@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
-
+import axios from 'axios';
 import ListingItem from '../components/ListingItem';
 import ListingItemSkeleton from '../skeletons/ListingItemSkeleton';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
-
+import convert from "xml-js"
 function MyListings() {
   const initalRender = useRef(true);
+  
 
   const [listings, setListings] = useState([]);
   const [filteredListings, setFilteredListings] = useState([]);
@@ -48,19 +49,35 @@ function MyListings() {
             headers: { 'Content-Type': 'text/xml' }
           })
           .then((res) => {
-            console.log("ITEMS:", res);
-            setListings(res)
+            const data = JSON.parse(
+              convert.xml2json(res.data, { compact: true, spaces: 2 }))
+              const propertiesArray = data["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns2:getAllPropertiesResponse"]["ns2:property"];
+ 
+              const arrayOfValues = propertiesArray.map(property => {
+                  const formattedObject = {};
+                  for (const key in property) {
+                      if (key.startsWith("ns2:")) {
+                          const newKey = key.slice(4);
+                          formattedObject[newKey] = property[key]["_text"];
+                      }
+                  }
+                  return formattedObject;
+              });
+               
+              console.log(arrayOfValues)
+              console.log(data)
+            setListings(formattedObject)
           })
           .catch((err) => {
             console.log(err);
           });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     }
-
+    console.log('lelelela')
     getAllListings();
-  })
-
-
+  },[] )
 
   useEffect(() => {
     if (!initalRender.current) {
@@ -145,3 +162,25 @@ function MyListings() {
 }
 
 export default MyListings;
+
+/*[
+  {
+      "id": "1",
+      "location": "ZAHROUNI",
+      "price": "450.0",
+      "title": "belle S+2",
+      "description": "ba7dha train",
+      "user_fk": "5",
+      "status": "RENT"
+  },
+  {
+      "id": "2",
+      "location": "ZAHROUNI",
+      "price": "450.0",
+      "title": "belle S+2",
+      "description": "ba7dha train",
+      "user_fk": "5",
+      "status": "RENT"
+  }
+]
+*/
